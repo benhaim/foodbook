@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>untitled</title> 
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="autocomplete.js"></script>
+	<link rel="stylesheet" href="autocomplete.css" />
+	<link rel="stylesheet" href="style.css" />
+	<link rel="stylesheet" href="image_grid.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+	<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+</head>
+
+<body onload="create_galery();set_tags();">
+
+	<!-- top menu -->
+	<div class="navBar">
+		<span style="float:left">
+			<a href="index.html"><button><i class="fa fa-heart"></i></button></a>
+		</span>
+		<span style="float:right">
+			<a href="capture.html"><button><i class="fa fa-camera"></i></button></a>
+		  <button><i class="fa fa-bars"></i></button>
+		</span>
+	</div>
+
+	<!-- search -->
+	<div>
+
+		<div id="restaurant_search" class="autocomplete">
+			<input type="text" placeholder="for specific restaurant" id="search_box"/>
+		</div>
+
+		<select data-placeholder="tags" multiple class="chosen-select" id="tags" name="test">
+		</select>
+
+		<button onClick="sort_grid();"><i class="fa fa-search"></i></button>
+
+		<div style="width:30%;display:inline-block">
+				<input type="range" id="temp" list="kms" step="50"  />
+				<datalist id="kms">
+				  <option value="0"   label="1km"></option>
+				  <option value="50"  label="2km"></option>
+				  <option value="100" label="3km"></option>
+				</datalist>
+			</div>
+			<div style="width:30%;display:inline-block">
+				<input type="range" id="temp" list="drs" step="50" />
+				<datalist id="drs">
+				  <option value="0"		label="$"></option>
+				  <option value="50"	label="$$"></option>
+				  <option value="100"	label="$$$"></option>
+				</datalist>
+			</div>
+	</div>
+
+	<!-- set the options for the search -->
+	<script>
+		// tags
+		function set_tags() {
+			tags.forEach(tag => {
+				var opt = document.createElement("option");
+				opt.textContent = tag;
+				opt.value = tag;
+				document.getElementById("tags").appendChild(opt);
+			});
+		  $(".chosen-select").chosen({
+	  	  no_results_text: "Oops, nothing found!"
+  		})
+		}
+		// rastaurants
+		autocomplete(document.getElementById("search_box"), restaurants);
+	</script>
+
+	<!-- executing the search -->
+	<script>
+		function sort_grid() {
+			var options = document.getElementById("tags").selectedOptions;
+			var selected_tags = Array.from(options).map(({ value }) => value);
+			//var tag = document.getElementById("search_box").value;
+			if (!selected_tags.length) {
+				images_tags_map.forEach((tags,ids)=>{
+				  document.getElementById(ids).style.display = "block";
+				})
+			} else {
+				selected_tags.forEach(tag => {
+					if (tag=="undefined") {	alert("undefined tag.. something is wrong"); }
+					images_tags_map.forEach((tags,ids)=>{
+						if (!tags.includes(tag)) {
+							document.getElementById(ids).style.display = "none";
+						} else {
+							document.getElementById(ids).style.display = "block";
+						}
+					})
+				})
+			}
+		}
+	</script>
+
+	<!-- feed -->
+	<div class="scrolable">
+		<div class="row" id="galery">
+	  </div>
+  </div>
+
+	<!-- galery scripts -->
+	<script>
+		const images_tags_map = new Map();
+		var temp_all_tags = [];
+
+		// random generation of galery
+		function create_galery() {
+			const galery = document.getElementById("galery");
+			for (let i=0;i<3;i++) {
+				var new_column = document.createElement("div");
+				new_column.classList.add("column")
+				for (let j=0;j<20;j++) {
+				  var file_name = Math.floor(Math.random() * 14) + 1;
+				  var new_img = document.createElement("img");
+				  new_img.src = file_name + ".jpeg";
+				  new_img.id  = i+"-"+j;
+				  var tags_for_that_img = [];
+				  for (let k=0;k<20;k++) {
+						var rand_tag = Math.floor(Math.random() * tags.length);
+					  tags_for_that_img.push(tags[rand_tag]);
+					}
+					images_tags_map.set(i+"-"+j,tags_for_that_img);
+					new_column.appendChild(new_img);
+					tags_for_that_img.forEach(tag => { temp_all_tags.push(tag); })
+				}
+				galery.appendChild(new_column);				
+			}
+		}
+
+		// loading gallery from example database, currently unused
+		function create_galery_orel() {
+			const galery = document.getElementById("galery");
+			for (let i=0;i<3;i++) {
+				var new_column = document.createElement("div");
+				new_column.classList.add("column")
+				for (let j=0;j<20;j++) {
+					var orel_test_item = Math.floor(Math.random() * test.length);
+					var new_img = document.createElement("img");
+					new_img.src = test[orel_test_item].img;
+				  new_img.id  = i+"-"+j;
+					var tags_for_that_img = [];
+					test[orel_test_item].foodCategory.forEach(tag => {tags_for_that_img.push(tag);})
+						test[orel_test_item].dishType.forEach(tag => {tags_for_that_img.push(tag);})
+						images_tags_map.set(i+"-"+j,tags_for_that_img);
+					new_column.appendChild(new_img);
+					tags_for_that_img.forEach(tag => { temp_all_tags.push(tag); })
+				}
+				galery.appendChild(new_column);				
+			}
+			temp_all_tags.forEach(tag => {if (!tags_for_autocomplete.includes(tag)) {tags_for_autocomplete.push(tag)}	});
+			autocomplete(document.getElementById("search_box"), tags_for_autocomplete);
+		}
+
+	</script>
+
+</body>
+</html>

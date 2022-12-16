@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>untitled</title> 
+	<script src="autocomplete.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="style.css" />
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.jquery.min.js"></script>
+	<link href="https://cdn.rawgit.com/harvesthq/chosen/gh-pages/chosen.min.css" rel="stylesheet"/>
+</head>
+
+<body onload="set_tags();">
+
+	<!-- top menu -->
+	<div class="navBar">
+		<span style="float:left">
+			<a href="index.html"><button><i class="fa fa-heart"></i></button></a>
+		</span>
+		<span style="float:right">
+			<a href="capture.html"><button><i class="fa fa-plus"></i></button></a>
+		  <button href="index.html"><i class="fa fa-bars"></i></button>
+		</span>
+	</div>
+
+ 
+	<div style="margin:auto;width:250px;height:250px;border:1px solid black;margin-top:40px">
+		<button style="float:left" onclick="document.getElementById('open_camera').click();"><i class="fa fa-camera"></i></button>
+		<input type="file" id="open_camera" style="display:none"/>
+		<button style="float:right"><i class="fa fa-expand"></i></button>
+		<p style="margin-top:80px">image place holder here</p>
+	</div>
+
+	<br/>
+	<input type="text" placeholder="resturant name"\>
+
+	<br/>
+  <select data-placeholder="tags" multiple class="chosen-select" id="tags" name="test">
+  </select>
+
+	<!-- set the options for the multiselect -->
+	<script>
+		function set_tags() {
+			tags.forEach(tag => {
+				var opt = document.createElement("option");
+				opt.textContent = tag;
+				document.getElementById("tags").appendChild(opt);
+			});
+		  $(".chosen-select").chosen({
+	  	  no_results_text: "Oops, nothing found!"
+  		})
+		}
+	</script>
+
+</body>
+</html>
